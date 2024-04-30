@@ -1,0 +1,12 @@
+{
+  "name": "ヒマチャブログ対策",
+  "version": "0.1",
+  "description": "",
+  "manifest_version": 3,
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
