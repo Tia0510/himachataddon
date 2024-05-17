@@ -58,7 +58,7 @@ if (storedTargetsID) {
 function createPopup() {
     var popup = document.createElement('div');
     popup.className = 'custom-popup';
-    popup.style.width = '600px';
+    popup.style.width = '300px';
     popup.style.height = '250px';
     popup.style.position = 'absolute';
     popup.style.top = '30%';
