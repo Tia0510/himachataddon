@@ -55,11 +55,15 @@ function createButton(text, onclickFunction) {
 var targetValues = localStorage.getItem('targetValues');
 if (targetValues) {
     targetValues = JSON.parse(targetValues);
+} else {
+    targetValues = "1"
 }
 
 var storedTargetsID = localStorage.getItem('targetsID');
 if (storedTargetsID) {
     targetsID = JSON.parse(storedTargetsID);
+} else {
+    storedTargetsID = "1"
 }
 
 function createPopup() {
