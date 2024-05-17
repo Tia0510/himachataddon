@@ -186,7 +186,7 @@ var BlogObserver = new MutationObserver(function(mutations) {
             if (node.classList && node.classList.contains('blogul')) {
                 var elements = node.querySelectorAll('span.small_coid');
                 elements.forEach(function(element) {
-                    if (storedBlogTarget.includes(element.textContent.trim().substring(1))) {
+                    if (targetValues.includes(element.textContent.trim().substring(1))) {
                         element.closest('.blogul').remove();
                         return; 
                     }
