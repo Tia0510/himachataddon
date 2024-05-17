@@ -52,12 +52,14 @@ function createButton(text, onclickFunction) {
     return button;
 }
 
+var targetValue = localStorage.getItem('targetValue') || "85992";
+
 var targetValues = localStorage.getItem('targetValues');
 if (targetValues) {
     targetValues = JSON.parse(targetValues);
-} else {
-    targetValues = "1"
 }
+
+var storedTargetsID = localStorage.getItem('targetsID') || "85992";
 
 var storedTargetsID = localStorage.getItem('targetsID');
 if (storedTargetsID) {
