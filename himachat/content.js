@@ -1,4 +1,4 @@
-const ClientVersion = 'OpenBeta0.2';
+const ClientVersion = 'Beta0.2(Open)';
 
 function createButton(text, onclickFunction) {
     var button = document.createElement('button');
