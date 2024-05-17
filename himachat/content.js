@@ -82,7 +82,7 @@ function createPopup() {
     });
 
     var BlogButton = createButton('ブログ検索', function() {
-        var inputValue = prompt('ブログ検索から抹消したい人のIDをスペースで区切って入力', targetValues.join(' '));
+        var inputValue = prompt('ブログ検索から抹消したい人のIDを入力', targetValues.join(' '));
         if (inputValue !== null) {
             targetValues = inputValue.split(' ').map(id => id.trim());
             localStorage.setItem('targetValues', JSON.stringify(targetValues));
@@ -90,7 +90,7 @@ function createPopup() {
     });
 
     var BosyuButton = createButton('募集欄', function() {
-        var inputValue = prompt('募集欄から抹消したい人のIDをスペースで区切って入力', targetsID.join(' '));
+        var inputValue = prompt('募集欄から抹消したい人のIDを入力', targetsID.join(' '));
         if (inputValue !== null) {
             targetsID = inputValue.split(' ').map(id => id.trim());
             localStorage.setItem('targetsID', JSON.stringify(targetsID));
