@@ -1,6 +1,4 @@
-const ClientVersion = 'OpenBeta0.2'
-
-
+const ClientVersion = 'Beta0.3';
 
 function createButton(text, onclickFunction) {
     var button = document.createElement('button');
@@ -12,13 +10,12 @@ function createButton(text, onclickFunction) {
 
 const CONFIG = {
     childList: true,
-    attribute: true,
+    attributes: true,
     subtree: true
 };
 
 const layer_observer = new MutationObserver(stream);
 layer_observer.observe(document.getElementById('co_layerroot'), CONFIG);
-
 
 function stream() {
     if (document.getElementsByClassName('layer layer_yobikomi')[0] != null) {
@@ -26,7 +23,7 @@ function stream() {
         list_observer.observe(document.getElementsByClassName('layer layer_yobikomi')[0], CONFIG);
     }
     if (document.getElementsByClassName('sourcespace')[0] != null) {
-        const boshu_observer = new MutationObserver(dispData);
+        const boshu_observer = new MutationObserver();
         boshu_observer.observe(document.getElementsByClassName('sourcespace')[0], CONFIG);
     }
 }
@@ -44,28 +41,24 @@ function hide() {
     });
 }
 
-function createButton(text, onclickFunction) {
-    var button = document.createElement('button');
-    button.className = 'widebtn';
-    button.textContent = text;
-    button.onclick = onclickFunction;
-    return button;
-}
-
 var targetValues = localStorage.getItem('targetValues');
 if (targetValues) {
     targetValues = JSON.parse(targetValues);
+} else {
+    targetValues = ["1"];
 }
 
 var storedTargetsID = localStorage.getItem('targetsID');
 if (storedTargetsID) {
     targetsID = JSON.parse(storedTargetsID);
+} else {
+    targetsID = ["1"];
 }
 
 function createPopup() {
     var popup = document.createElement('div');
     popup.className = 'custom-popup';
-    popup.style.width = '600px';
+    popup.style.width = '300px';
     popup.style.height = '250px';
     popup.style.position = 'absolute';
     popup.style.top = '30%';
@@ -76,12 +69,11 @@ function createPopup() {
     popup.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.5)';
     popup.style.zIndex = '1';
 
-    
     var versionText = document.createElement('p');
-    versionText.textContent = ClientVersion
+    versionText.textContent = ClientVersion;
     versionText.style.position = 'absolute';
     versionText.style.bottom = '10px';
-    versionText.style.color = 'blue'
+    versionText.style.color = 'blue';
     versionText.style.left = '10px';
     popup.appendChild(versionText);
 
@@ -103,7 +95,6 @@ function createPopup() {
             targetsID = inputValue.split(' ').map(id => id.trim());
             localStorage.setItem('targetsID', JSON.stringify(targetsID));
         }
-
     });
 
     popup.appendChild(closeButton);
@@ -194,6 +185,56 @@ var BlogObserver = new MutationObserver(function(mutations) {
             }
         });
     });
+});
+
+var TimlineObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === 1) {
+                var categoryElements = node.querySelectorAll('.category');
+                categoryElements.forEach(function(categoryElement) {
+                    if (categoryElement.textContent === '自分のみ') {
+                        var newLabel = document.createElement('label');
+                        newLabel.className = 'radio01';
+                        newLabel.setAttribute('onclick', 'TimelineUser()');
+
+                        var newInput = document.createElement('input');
+                        newInput.type = 'radio';
+                        newInput.name = 'mytlbtn';
+                        newInput.value = '2';
+
+                        var newSpan = document.createElement('span');
+                        newSpan.className = 'category';
+                        newSpan.textContent = 'ユーザー指定';
+
+                        var textBox = document.createElement('input');
+                        textBox.type = 'text';
+                        textBox.placeholder = 'IDを入力';
+                        textBox.id = 'userIDInput';
+
+                        newLabel.appendChild(newInput);
+                        newLabel.appendChild(newSpan);
+
+                        categoryElement.closest('label').insertAdjacentElement('afterend', newLabel);
+                        newLabel.insertAdjacentElement('afterend', textBox);
+                    }
+                });
+            }
+        });
+    });
+});
+
+function TimelineUser() {
+    var userID = document.getElementById('userIDInput').value;
+    if (userID) {
+        LoadTimelineList(userID, 1, 0, "#co_mytimelinelist");
+    }
+}
+
+
+TimlineObserver.observe(document.body, {
+    childList: true,
+    subtree: true
 });
 
 ButtonObserver.observe(document.body, {
