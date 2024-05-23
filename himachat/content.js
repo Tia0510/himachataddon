@@ -1,4 +1,6 @@
-const ClientVersion = 'Beta0.2(Open)';
+const ClientVersion = 'OpenBeta0.2'
+
+
 
 function createButton(text, onclickFunction) {
     var button = document.createElement('button');
@@ -10,12 +12,13 @@ function createButton(text, onclickFunction) {
 
 const CONFIG = {
     childList: true,
-    attributes: true,
+    attribute: true,
     subtree: true
 };
 
 const layer_observer = new MutationObserver(stream);
 layer_observer.observe(document.getElementById('co_layerroot'), CONFIG);
+
 
 function stream() {
     if (document.getElementsByClassName('layer layer_yobikomi')[0] != null) {
@@ -41,24 +44,28 @@ function hide() {
     });
 }
 
+function createButton(text, onclickFunction) {
+    var button = document.createElement('button');
+    button.className = 'widebtn';
+    button.textContent = text;
+    button.onclick = onclickFunction;
+    return button;
+}
+
 var targetValues = localStorage.getItem('targetValues');
 if (targetValues) {
     targetValues = JSON.parse(targetValues);
-} else {
-    targetValues = ["1"];
 }
 
 var storedTargetsID = localStorage.getItem('targetsID');
 if (storedTargetsID) {
     targetsID = JSON.parse(storedTargetsID);
-} else {
-    targetsID = ["1"];
 }
 
 function createPopup() {
     var popup = document.createElement('div');
     popup.className = 'custom-popup';
-    popup.style.width = '300px';
+    popup.style.width = '600px';
     popup.style.height = '250px';
     popup.style.position = 'absolute';
     popup.style.top = '30%';
@@ -69,11 +76,12 @@ function createPopup() {
     popup.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.5)';
     popup.style.zIndex = '1';
 
+    
     var versionText = document.createElement('p');
-    versionText.textContent = ClientVersion;
+    versionText.textContent = ClientVersion
     versionText.style.position = 'absolute';
     versionText.style.bottom = '10px';
-    versionText.style.color = 'blue';
+    versionText.style.color = 'blue'
     versionText.style.left = '10px';
     popup.appendChild(versionText);
 
@@ -82,7 +90,7 @@ function createPopup() {
     });
 
     var BlogButton = createButton('ブログ検索', function() {
-        var inputValue = prompt('ブログ検索から抹消したい人のIDを入力', targetValues.join(' '));
+        var inputValue = prompt('ブログ検索から抹消したい人のIDをスペースで区切って入力', targetValues.join(' '));
         if (inputValue !== null) {
             targetValues = inputValue.split(' ').map(id => id.trim());
             localStorage.setItem('targetValues', JSON.stringify(targetValues));
@@ -90,11 +98,12 @@ function createPopup() {
     });
 
     var BosyuButton = createButton('募集欄', function() {
-        var inputValue = prompt('募集欄から抹消したい人のIDを入力', targetsID.join(' '));
+        var inputValue = prompt('募集欄から抹消したい人のIDをスペースで区切って入力', targetsID.join(' '));
         if (inputValue !== null) {
             targetsID = inputValue.split(' ').map(id => id.trim());
             localStorage.setItem('targetsID', JSON.stringify(targetsID));
         }
+
     });
 
     popup.appendChild(closeButton);
