@@ -1,4 +1,4 @@
-const ClientVersion = 'Beta0.3';
+const ClientVersion = 'Beta0.4';
 
 function createButton(text, onclickFunction) {
     var button = document.createElement('button');
@@ -196,7 +196,7 @@ var TimlineObserver = new MutationObserver(function(mutations) {
                     if (categoryElement.textContent === '自分のみ') {
                         var newLabel = document.createElement('label');
                         newLabel.className = 'radio01';
-                        newLabel.setAttribute('onclick', 'TimelineUser()');
+                        newLabel.setAttribute("onclick", "var userID = document.getElementById('userIDInput').value; if (userID) LoadTimelineList(userID, 1, 0, '#co_mytimelinelist')" );
 
                         var newInput = document.createElement('input');
                         newInput.type = 'radio';
@@ -224,12 +224,6 @@ var TimlineObserver = new MutationObserver(function(mutations) {
     });
 });
 
-function TimelineUser() {
-    var userID = document.getElementById('userIDInput').value;
-    if (userID) {
-        LoadTimelineList(userID, 1, 0, "#co_mytimelinelist");
-    }
-}
 
 
 TimlineObserver.observe(document.body, {
