@@ -205,7 +205,7 @@ var TimlineObserver = new MutationObserver(function(mutations) {
 
                         var newSpan = document.createElement('span');
                         newSpan.className = 'category';
-                        newSpan.textContent = ' 指定 ';
+                        newSpan.textContent = '　指定　';
 
                         var textBox = document.createElement('input');
                         textBox.type = 'text';
