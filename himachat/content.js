@@ -1,4 +1,4 @@
-const ClientVersion = 'Beta0.4';
+const ClientVersion = 'Beta0.3';
 
 function createButton(text, onclickFunction) {
     var button = document.createElement('button');
@@ -205,7 +205,7 @@ var TimlineObserver = new MutationObserver(function(mutations) {
 
                         var newSpan = document.createElement('span');
                         newSpan.className = 'category';
-                        newSpan.textContent = 'ユーザー指定';
+                        newSpan.textContent = '指定';
 
                         var textBox = document.createElement('input');
                         textBox.type = 'text';
