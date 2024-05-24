@@ -1,4 +1,4 @@
-const ClientVersion = 'Beta0.2(Open)';
+const ClientVersion = 'Beta0.3';
 
 function createButton(text, onclickFunction) {
     var button = document.createElement('button');
@@ -23,7 +23,7 @@ function stream() {
         list_observer.observe(document.getElementsByClassName('layer layer_yobikomi')[0], CONFIG);
     }
     if (document.getElementsByClassName('sourcespace')[0] != null) {
-        const boshu_observer = new MutationObserver(dispData);
+        const boshu_observer = new MutationObserver();
         boshu_observer.observe(document.getElementsByClassName('sourcespace')[0], CONFIG);
     }
 }
@@ -82,7 +82,7 @@ function createPopup() {
     });
 
     var BlogButton = createButton('ブログ検索', function() {
-        var inputValue = prompt('ブログ検索から抹消したい人のIDを入力', targetValues.join(' '));
+        var inputValue = prompt('ブログ検索から抹消したい人のIDをスペースで区切って入力', targetValues.join(' '));
         if (inputValue !== null) {
             targetValues = inputValue.split(' ').map(id => id.trim());
             localStorage.setItem('targetValues', JSON.stringify(targetValues));
@@ -90,7 +90,7 @@ function createPopup() {
     });
 
     var BosyuButton = createButton('募集欄', function() {
-        var inputValue = prompt('募集欄から抹消したい人のIDを入力', targetsID.join(' '));
+        var inputValue = prompt('募集欄から抹消したい人のIDをスペースで区切って入力', targetsID.join(' '));
         if (inputValue !== null) {
             targetsID = inputValue.split(' ').map(id => id.trim());
             localStorage.setItem('targetsID', JSON.stringify(targetsID));
@@ -185,6 +185,57 @@ var BlogObserver = new MutationObserver(function(mutations) {
             }
         });
     });
+});
+
+var TimlineObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === 1) {
+                var categoryElements = node.querySelectorAll('.category');
+                categoryElements.forEach(function(categoryElement) {
+                    if (categoryElement.textContent === '自分のみ') {
+                        var newLabel = document.createElement('label');
+                        newLabel.className = 'radio01';
+                        // ここだけ変えてる。関数なしで実行するようにしてる。
+                        newLabel.setAttribute("onclick", "var userID = document.getElementById('userIDInput').value; if (userID) LoadTimelineList(userID, 1, 0, '#co_mytimelinelist')" );
+
+                        var newInput = document.createElement('input');
+                        newInput.type = 'radio';
+                        newInput.name = 'mytlbtn';
+                        newInput.value = '2';
+
+                        var newSpan = document.createElement('span');
+                        newSpan.className = 'category';
+                        newSpan.textContent = 'ユーザー指定';
+
+                        var textBox = document.createElement('input');
+                        textBox.type = 'text';
+                        textBox.placeholder = 'IDを入力';
+                        textBox.id = 'userIDInput';
+
+                        newLabel.appendChild(newInput);
+                        newLabel.appendChild(newSpan);
+
+                        categoryElement.closest('label').insertAdjacentElement('afterend', newLabel);
+                        newLabel.insertAdjacentElement('afterend', textBox);
+                    }
+                });
+            }
+        });
+    });
+});
+
+function TimelineUser() {
+    var userID = document.getElementById('userIDInput').value;
+    if (userID) {
+        LoadTimelineList(userID, 1, 0, "#co_mytimelinelist");
+    }
+}
+
+
+TimlineObserver.observe(document.body, {
+    childList: true,
+    subtree: true
 });
 
 ButtonObserver.observe(document.body, {
