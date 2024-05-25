@@ -88,7 +88,7 @@ function createPopup() {
     });
 
     var update = createButton('アップデート情報', function() {
-        alert('アップデート情報です\nBeta0.1(Closed)\nボタンの追加等。機能は0でしたｗ\nBeta0.2(Open)\nブログ検索、募集欄から特定の人物を消す機能を追加\nBeta0.3(Open)\nタイムラインのユーザー指定機能を追加\nBeta0.4(Open)\nBlockDisabler(テスト版)を追加\n\n次回アプデはいちいちプロフィールに行かなくてもIP確認できる機能を追加する予定です(；・ω・)');
+        alert('アップデート情報です\nBeta0.1(Closed)\nボタンの追加等。機能は0でしたｗ\nBeta0.2(Open)\nブログ検索、募集欄から特定の人物を消す機能を追加\nBeta0.3(Open)\nタイムラインのユーザー指定機能を追加\nBeta0.4(Open)\nBlockDisabler(テスト版)を追加\nスマホだと位置がずれるので調整しますいつか\n\n次回アプデはいちいちプロフィールに行かなくてもIP確認できる機能を追加する予定です(；・ω・)');
     });
 
     var BlogButton = createButton('ブログ検索', function() {
@@ -127,7 +127,7 @@ function createPopup() {
     });
 
     var Setumei = createButton('BlockDisablerについて', function() {
-        alert('BlockDisablerとは、文字通りブロックを回避する機能です(現在プロフィールのみ)\nBlockDisabler(テスト版)というボタンを押すと文字入力画面が出ますので、アカウントのログインIDとパスワードをスペースで区切って入力してください。\n※以下注意\nタイムライン、ブログ等がまだ表示されません。気が向いたらやります。\nまた、仮実装中のため最適化が全くといいほどされていません\n例：ブロックしてる人に足跡つけるたびにLoginPHPを叩くため足跡つけ過ぎると404で死ぬ、上記の通り毎回LoginPHP叩いてるため表示が遅い\n最適化頑張ります・・・\nBy開発者');
+        alert('BlockDisablerとは、文字通りブロックを回避する機能です(現在プロフィールのみ、スマホでは右側にスクロールすると出てきます)\nBlockDisabler(テスト版)というボタンを押すと文字入力画面が出ますので、アカウントのログインIDとパスワードをスペースで区切って入力してください。\n※以下注意\nタイムライン、ブログ等がまだ表示されません。気が向いたらやります。\nまた、仮実装中のため最適化が全くといいほどされていません\n例：ブロックしてる人に足跡つけるたびにLoginPHPを叩くため足跡つけ過ぎると404で死ぬ、上記の通り毎回LoginPHP叩いてるため表示が遅い\n最適化頑張ります・・・\nBy開発者');
     });
 
 
@@ -377,7 +377,8 @@ var ProfileObserver = new MutationObserver(function(mutations) {
                                 message = message.replace(/\\r\\n/g, '<br>').replace(/\\n/g, '<br>');
 
                                 const popupHTML = `
-                                <div class="layer layer_userwindow" id="layer69" style="position: absolute; top: 90px; left: 551.5px;">
+                                
+                                <div class="layer layer_userwindow" id="layer69"
                                     <div class="sourcespace">
                                         <span class="profile_userid">ユーザーID${numbersOnly}<button class="nazekakikanai" onclick="CopyBtn(this,120966)">コピー</button></span>
                                         <span class="profile_kanribtn astylenormal" onclick="UserKanri(120966)">管理</span>
@@ -402,9 +403,6 @@ var ProfileObserver = new MutationObserver(function(mutations) {
 
                                 </div>
                                 `;
-
-                                
-    
                                 document.body.insertAdjacentHTML('beforeend', popupHTML);
                             })
                             .catch(error => console.error(error));
