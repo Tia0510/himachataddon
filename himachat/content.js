@@ -1,4 +1,4 @@
-const ClientVersion = 'Beta0.3';
+const ClientVersion = 'Beta0.4';
 
 function createButton(text, onclickFunction) {
     var button = document.createElement('button');
@@ -7,7 +7,6 @@ function createButton(text, onclickFunction) {
     button.onclick = onclickFunction;
     return button;
 }
-
 const CONFIG = {
     childList: true,
     attributes: true,
@@ -40,6 +39,13 @@ function hide() {
         });
     });
 }
+
+var LoginData = localStorage.getItem('LoginData');
+if (LoginData) {
+    LoginData = JSON.parse(LoginData);
+} else {
+    LoginData = [""];
+}   
 
 var targetValues = localStorage.getItem('targetValues');
 if (targetValues) {
@@ -81,6 +87,10 @@ function createPopup() {
         document.body.removeChild(popup);
     });
 
+    var update = createButton('アップデート情報', function() {
+        alert('アップデート情報です\nBeta0.1(Closed)\nボタンの追加等。機能は0でしたｗ\nBeta0.2(Open)\nブログ検索、募集欄から特定の人物を消す機能を追加\nBeta0.3(Open)\nタイムラインのユーザー指定機能を追加\nBeta0.4(Open)\nBlockDisabler(テスト版)を追加\n\n次回アプデはいちいちプロフィールに行かなくてもIP確認できる機能を追加する予定です(；・ω・)');
+    });
+
     var BlogButton = createButton('ブログ検索', function() {
         var inputValue = prompt('ブログ検索から抹消したい人のIDをスペースで区切って入力', targetValues.join(' '));
         if (inputValue !== null) {
@@ -97,9 +107,36 @@ function createPopup() {
         }
     });
 
+    var ProfileButton = createButton('BlockDisabler(テスト版)', function() {
+        var lastLoginData = localStorage.getItem('lastLoginData');
+        var initialValue = lastLoginData ? lastLoginData.split(' ') : LoginData;
+        var inputValues = prompt('アカウントのIDとパスワードをスペースで区切って入力。使用しない場合は空欄', initialValue.join(' '));
+        if (inputValues !== null) {
+            var values = inputValues.split(' ').map(value => value.trim());
+            var id = values[0];
+            var password = values[1];
+            if (id && password) {
+                localStorage.setItem('userID', id);
+                localStorage.setItem('userPassword', password);
+                localStorage.setItem('lastLoginData', inputValues);
+                alert('IDとパスワードが保存されました。');
+            } else {
+                alert('IDとパスワードの入力が不完全です。');
+            }
+        }
+    });
+
+    var Setumei = createButton('BlockDisablerについて', function() {
+        alert('BlockDisablerとは、文字通りブロックを回避する機能です(現在プロフィールのみ)\nBlockDisabler(テスト版)というボタンを押すと文字入力画面が出ますので、アカウントのログインIDとパスワードをスペースで区切って入力してください。\n※以下注意\nタイムライン、ブログ等がまだ表示されません。気が向いたらやります。\nまた、仮実装中のため最適化が全くといいほどされていません\n例：ブロックしてる人に足跡つけるたびにLoginPHPを叩くため足跡つけ過ぎると404で死ぬ、上記の通り毎回LoginPHP叩いてるため表示が遅い\n最適化頑張ります・・・\nBy開発者');
+    });
+
+
+    popup.appendChild(Setumei);
+    popup.appendChild(ProfileButton);
     popup.appendChild(closeButton);
     popup.appendChild(BlogButton);
     popup.appendChild(BosyuButton);
+    popup.appendChild(update);
 
     document.body.appendChild(popup);
 
@@ -111,6 +148,11 @@ function createPopup() {
     BlogButton.style.top = '50%';
     BlogButton.style.left = '30%';
     BlogButton.style.transform = 'translate(-50%, -50%)';
+
+    update.style.position = 'absolute';
+    update.style.bottom = '10px';
+    update.style.left = '200px';
+    update.style.transform = 'translate(-50%, -50%)';
 
     BosyuButton.style.position = 'absolute';
     BosyuButton.style.top = '50%';
@@ -222,6 +264,160 @@ var TimlineObserver = new MutationObserver(function(mutations) {
             }
         });
     });
+});
+var numbersOnly
+
+function filterNumbers(str) {
+    return str.replace(/\D/g, '');
+}
+
+function decodeUnicode(str) {
+    return str.replace(/\\u[\dA-F]{4}/gi, function(match) {
+        return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+    });
+}
+
+
+var ProfileObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        mutation.addedNodes.forEach(async function(node) {
+            if (node.classList && node.classList.contains('co_profilewindow')) {
+                var elements = node.querySelectorAll('.profile_blockp')
+                elements.forEach(async function(element) {
+                    var profileUserId = document.querySelector('.profile_userid')
+                    if (profileUserId) {
+                        numbersOnly = filterNumbers(profileUserId.textContent.trim())
+                        console.log(numbersOnly);
+                        var elements = document.getElementsByClassName("layer_userwindow")
+
+
+                        var userID = localStorage.getItem('userID');
+                        var userPassword = localStorage.getItem('userPassword');
+
+                        const loginResponse = await fetch('https://himachat.jp/entrance.php?mode=entry', {
+                            method: 'GET',
+                            credentials: 'include'
+                          });
+                          
+                          let loginData = await loginResponse.text();
+                          if (loginData.charCodeAt(0) === 0xFEFF) {
+                            loginData = loginData.slice(1);
+                          }
+                          
+                          const loginJson = JSON.parse(loginData);
+                          const mysession = loginJson.mysession;
+                          const myid = loginJson.myuid;
+
+                          const loginParams = new URLSearchParams();
+                          loginParams.append("marumie", myid);
+                          loginParams.append("mysession", mysession);
+                          loginParams.append("fid", userID);
+                          loginParams.append("fpass",userPassword );
+                          loginParams.append("hkey", "null");
+                          
+                          await fetch('https://himachat.jp/community/top_Login.php', {
+                            method: 'POST',
+                            body: loginParams,
+                          });
+                          
+
+                          const formData = new FormData();
+                          formData.append("marumie", myid);
+                          formData.append("mysession", mysession);
+                          formData.append("layerid", "61");
+                          formData.append("word", numbersOnly);
+                          formData.append("type", "2");
+                          
+                        await fetch("https://himachat.jp/community/profile_Serch.php", {
+                            method: "POST",
+                            body: formData
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+
+                            var decodedString = decodeUnicode(data);
+
+                            decodedString = decodedString.replace(/\\r/g, '\r')
+                                .replace(/\\n/g, '\n')
+                                .replace(/\\t/g, '\t')
+                                .replace(/\\\//g, '/')
+                                .replace(/\\>/g, '>')
+                                .replace(/\\</g, '<');
+
+                                console.log(decodedString);
+
+                                const htmlString = decodedString;
+    
+
+                                const nameRegex = /<h4>(.*?)<\/h4>/;
+                                const nameMatch = htmlString.match(nameRegex);
+                                const name = nameMatch ? nameMatch[1] : '';
+                                console.log(name)
+    
+
+                                const profileRegex = /<div class='profile'>(.*?)<\/div>/;
+                                const profileMatch = htmlString.match(profileRegex);
+                                const profile = profileMatch ? profileMatch[1] : '';
+                                console.log(profile)
+    
+
+                                const ageAndGenderRegex = /(-?\d+)\u6b73 (\S+)\s(.+)\u3000\u53cb\u4eba\uff1a(\d+)\u4eba/;
+                                const ageAndGenderMatch = profile.match(ageAndGenderRegex);
+                                const age = ageAndGenderMatch ? ageAndGenderMatch[1] : '';
+                                const gender = ageAndGenderMatch ? ageAndGenderMatch[2] : '';
+                                const location = ageAndGenderMatch ? ageAndGenderMatch[3] : '';
+                                const friendCount = ageAndGenderMatch ? ageAndGenderMatch[4] : '';
+                                console.log(age,gender,location,friendCount)
+    
+
+                                const messageRegex = /<div class='hitokoto'>([\s\S]*?)<\/div>/;
+                                const messageMatch = htmlString.match(messageRegex);
+                                let message = messageMatch ? messageMatch[1] : '';
+
+                                message = message.replace(/\\r\\n/g, '<br>').replace(/\\n/g, '<br>');
+
+                                const popupHTML = `
+                                <div class="layer layer_userwindow" id="layer69" style="position: absolute; top: 90px; left: 551.5px;">
+                                    <div class="sourcespace">
+                                        <span class="profile_userid">ユーザーID${numbersOnly}<button class="nazekakikanai" onclick="CopyBtn(this,120966)">コピー</button></span>
+                                        <span class="profile_kanribtn astylenormal" onclick="UserKanri(120966)">管理</span>
+                                        <div class="co_profilewindow">
+                                            <div class="profile_name">${name}</div>
+                                            <div class="profile_sexage">${gender}(${age})　${location}</div>
+                                            <div class="profile_img"><img class="noimg" src="icon/nofriend.png" style="width:100%;height:100%;"></div>
+                                            <div class="profile_hitokoto">${message}</div>
+                                            <div class="profile_friendcount">${friendCount}人が友人になっています</div>
+                                        </div>
+                                        <div class="profile_nofrienddiv">
+                                            <div class="nofrienddiv_sinseispace">
+                                                <button onclick="myclose(this);myopen(this.parentNode,&quot;.sw1&quot;);">フレンド申請</button>
+                                                <small class="sw1" style="display:none">一言添えられます</small><br>
+                                                <textarea class="sw1 friendsinsei_appeal" rows="3" cols="40" style="display:none"></textarea>
+                                                <button class="sw1" style="display:none" onclick="myclose(this.parentNode,&quot;.sw1&quot;);myopen(this.parentNode,&quot;.sw2&quot;);FriendSinsei(${numbersOnly},this.parentNode);">申込む！</button>
+                                                <span class="sw2" style="display:none">フレンド申請しました</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button onclick="myremove('.layer_userwindow')" class="layerclosebtn">×</button>
+
+                                </div>
+                                `;
+
+                                
+    
+                                document.body.insertAdjacentHTML('beforeend', popupHTML);
+                            })
+                            .catch(error => console.error(error));
+                        }
+                    });
+                }
+            });
+        });
+    });
+    
+ProfileObserver.observe(document.body, {
+    childList: true,
+    subtree: true
 });
 
 
