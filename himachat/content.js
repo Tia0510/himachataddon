@@ -110,7 +110,7 @@ function createPopup() {
     var ProfileButton = createButton('BlockDisabler(テスト版)', function() {
         var lastLoginData = localStorage.getItem('lastLoginData');
         var initialValue = lastLoginData ? lastLoginData.split(' ') : LoginData;
-        var inputValues = prompt('アカウントのIDとパスワードをスペースで区切って入力。使用しない場合は空欄', initialValue.join(' '));
+        var inputValues = prompt('アカウントのIDとパスワードをスペースで区切って入力', initialValue.join(' '));
         if (inputValues !== null) {
             var values = inputValues.split(' ').map(value => value.trim());
             var id = values[0];
